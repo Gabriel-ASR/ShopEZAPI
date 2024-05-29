@@ -1,33 +1,31 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const editRoute = require("./Routes/EditRoute");
-const JWT = require("jsonwebtoken");
-const swaggerUI = require("swagger-ui-express");
-const YAML = require("yamljs");
-const fs = require("fs");
-const FavRoute = require("./Routes/FavRoute");
-const path = require("path");
 require("dotenv").config();
 
+var express = require("express");
+const mongoose = require("mongoose");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
+
+const UsersRouter = require("./Routes/UsersRouter");
+const ProductRouter = require("./Routes/ProductRouter");
+const ApiDocsRouter = require("./Routes/ApiDocsRouter");
+const SignInRouter = require("./Routes/SignInRouter");
+
 const app = express();
+
+app.use(logger("dev"));
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(express.json());
-const port = 3000;
 
-// iniciando o arquivo da documentação e atrelando-o à rota /api-doc
-const file = fs.readFileSync(
-  path.resolve(__dirname, "./swagger.yaml"),
-  "utf-8"
-);
-const swaggerDocs = YAML.parse(file);
-app.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerDocs));
+app.use("/api-docs", ApiDocsRouter);
 
-app.use("/editar-produto", editRoute);
+app.use("/usuarios", UsersRouter);
 
-app.get("/", (req, res) => {
-  res.send("<h1>Olá!</h1>");
-});
+app.use("/produtos", ProductRouter);
 
-app.listen(port, () => {
+app.use("/cadastrar", SignInRouter);
+
+app.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_CONNECT);
   console.log("App Running");
 });

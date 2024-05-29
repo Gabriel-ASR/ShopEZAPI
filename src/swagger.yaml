@@ -1,1 +1,191 @@
 openapi: 3.0.0
+
+info:
+  title: ShopEZ API
+  description: API de uma loja fictícia de produtos.
+  version: 1.0.1
+
+paths:
+  /produtos:
+    get:
+      tags:
+        - products
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        404:
+          content:
+            application:/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    post:
+      tags:
+        - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        422:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /produtos/{id}:
+    get:
+      tags:
+        - products
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Message"
+
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    put:
+      tags:
+        - products
+      parameters:
+        - in: path
+          type: string
+          name: id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        204:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        422:
+          content:
+            applcation/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /usuarios:
+    get:
+      tags:
+        - users
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /usuarios/{id}:
+    get:
+      tags:
+        - users
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /usuarios/{id}/produtos:
+    get:
+      tags:
+        - products
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /cadastrar:
+    post:
+      tags:
+        - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/User"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        422:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        preco:
+          type: number
+        desc:
+          type: string
+        image_URL:
+          type: string
+        createdBy:
+          type: string
+    Message:
+      type: object
+      properties:
+        msg:
+          type: string
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
