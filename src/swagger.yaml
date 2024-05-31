@@ -2,14 +2,15 @@ openapi: 3.0.0
 
 info:
   title: ShopEZ API
-  description: API de uma loja fictícia de produtos.
-  version: 1.0.1
+  description: Uma API de uma loja fictícia de produtos para a disciplina de Backend.
+  version: 0.2.0
 
 paths:
   /produtos:
     get:
+      summary: Retorna uma lista com todos os produtos presentes no banco de dados.
       tags:
-        - products
+        - Produtos
       responses:
         200:
           content:
@@ -22,8 +23,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Message"
     post:
+      summary: Adiciona um novo produto no banco de dados.
       tags:
-        - products
+        - Produtos
       requestBody:
         content:
           application/json:
@@ -40,10 +42,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+
   /produtos/{id}:
     get:
+      summary: Retorna o produto identificado pelo Id inserido.
       tags:
-        - products
+        - Produtos
       parameters:
         - in: path
           type: string
@@ -54,11 +58,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-        400:
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/Message"
 
         404:
           content:
@@ -66,8 +65,9 @@ paths:
               schema:
                 $ref: "#/components/schemas/Message"
     put:
+      summary: Atualiza os dados de um produto.
       tags:
-        - products
+        - Produtos
       parameters:
         - in: path
           type: string
@@ -78,7 +78,7 @@ paths:
             schema:
               $ref: "#/components/schemas/Product"
       responses:
-        204:
+        200:
           content:
             application/json:
               schema:
@@ -88,49 +88,10 @@ paths:
             applcation/json:
               schema:
                 $ref: "#/components/schemas/Message"
-
-  /usuarios:
-    get:
+    delete:
+      summary: Deleta o produto especificado pelo Id.
       tags:
-        - users
-      parameters:
-        - in: path
-          type: string
-          name: id
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        404:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-  /usuarios/{id}:
-    get:
-      tags:
-        - users
-      parameters:
-        - in: path
-          type: string
-          name: id
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        404:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-  /usuarios/{id}/produtos:
-    get:
-      tags:
-        - products
+        - Produtos
       parameters:
         - in: path
           type: string
@@ -141,10 +102,119 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /usuarios/{id}/produtos:
+    get:
+      summary: Retorna uma lista de produtos criados pelo usuário especificado pelo Id.
+      tags:
+        - Produtos
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /usuarios:
+    get:
+      summary: Retorna uma lista de todos os usuários presentes no banco de dados.
+      tags:
+        - Usuários
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /usuarios/{id}:
+    get:
+      summary: Retorna o usuário especificado pelo Id.
+      tags:
+        - Usuários
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    put:
+      summary: Atualiza os dados de um usuário.
+      tags:
+        - Usuários
+      parameters:
+        - in: path
+          type: string
+          name: id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        422:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    delete:
+      summary: Deleta o usuário especificado pelo Id.
+      tags:
+        - Usuários
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/User"
+        404:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Message"
+
   /cadastrar:
     post:
+      summary: Cria um novo usuário.
       tags:
-        - users
+        - Usuários
       requestBody:
         content:
           application/json:
@@ -155,11 +225,121 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#components/schemas/User"
+                $ref: "#/components/schemas/User"
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         422:
           content:
             application/json:
               schema:
+                $ref: "#/components/schemas/Message"
+
+  /carrinhos:
+    get:
+      summary: Retorna uma lista de todos os carrinhos, de todos os usuários.
+      tags:
+        - Carrinhos
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+    post:
+      summary: Cria um novo carrinho.
+      tags:
+        - Carrinhos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cart"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cart"
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        422:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /carrinhos/{id}:
+    get:
+      summary: Retorna o carrinho especificado pelo Id inserido.
+      tags:
+        - Carrinhos
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Cart"
+        404:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Message"
+    put:
+      summary: Atualiza o carrinho especificado pelo Id.
+      tags:
+        - Carrinhos
+      parameters:
+        - in: path
+          type: string
+          name: id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cart"
+      responses:
+        200:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Cart"
+        422:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Message"
+    delete:
+      summary: Deleta o carrinho especificado pelo Id.
+      tags:
+        - Carrinhos
+      parameters:
+        - in: path
+          type: string
+          name: id
+      responses:
+        200:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Cart"
+        404:
+          content:
+            application/json:
+              schemas:
                 $ref: "#/components/schemas/Message"
 
 components:
@@ -188,4 +368,24 @@ components:
         email:
           type: string
         password:
+          type: string
+    Cart:
+      type: object
+      properties:
+        productList:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              preco:
+                type: number
+              desc:
+                type: string
+              image_URL:
+                type: string
+              createdBy:
+                type: string
+        ownedBy:
           type: string

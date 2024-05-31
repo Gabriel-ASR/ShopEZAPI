@@ -9,4 +9,8 @@ router.get("/:userId", userController.getUserById);
 
 router.get("/:userId/produtos", productController.getUserProducts);
 
+router.put("/:userId", userController.validateData, userController.updateUser);
+
+router.delete("/:userId", userController.deleteUser);
+
 module.exports = router;
