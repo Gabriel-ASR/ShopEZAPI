@@ -3,7 +3,7 @@ openapi: 3.0.0
 info:
   title: ShopEZ API
   description: Uma API de uma loja fictícia de produtos para a disciplina de Backend.
-  version: 0.2.0
+  version: 1.0.0
 
 paths:
   /produtos:
@@ -60,7 +60,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -85,9 +89,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
-        422:
+        400:
           content:
             applcation/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        422:
+          content:
+            application/json:
               schema:
                 $ref: "#/components/schemas/Message"
       security:
@@ -106,6 +120,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -129,6 +148,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Product"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -169,6 +193,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -193,6 +222,16 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "$/components/schemas/Message"
         422:
           content:
             application/json:
@@ -214,6 +253,11 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/User"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -283,6 +327,11 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Cart"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -309,6 +358,16 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Cart"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        404:
+          content:
+            application/json:
+              schemas:
+                $ref: "#/components/schemas/Message"
         422:
           content:
             application/json:
@@ -331,6 +390,11 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Cart"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         404:
           content:
             application/json:
@@ -379,6 +443,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         409:
           content:
             application/json:

@@ -29,7 +29,6 @@ const refreshToken = (req, res) => {
       const payload = JWT.verify(token, process.env.JWT_SECRET, {
         ignoreExpiration: true,
       });
-      console.log(payload);
       res.json({
         token: JWT.sign(
           { email: payload.email, id: payload.id },

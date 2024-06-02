@@ -2,15 +2,11 @@ const { Cart } = require("../Models/CartModel");
 const JWT = require("jsonwebtoken");
 
 const getAllCarts = async (req, res) => {
-  try {
-    const carts = await Cart.find();
-    if (!carts) {
-      res.status(404).send({ Message: "Não há carrinhos registrados!" });
-    } else {
-      res.send(carts);
-    }
-  } catch (e) {
-    res.status(500).send({ Message: e });
+  const carts = await Cart.find();
+  if (!carts) {
+    res.status(404).send({ Message: "Não há carrinhos registrados!" });
+  } else {
+    res.send(carts);
   }
 };
 
@@ -23,7 +19,7 @@ const getCartById = async (req, res) => {
       res.send(cart);
     }
   } catch (e) {
-    res.status(500).send({ Message: e });
+    res.status(400).send({ Message: "Id inválido." });
   }
 };
 
@@ -42,12 +38,17 @@ const addNewCart = async (req, res) => {
 
 const updateCart = async (req, res) => {
   try {
-    const cart = await Cart.findByIdAndUpdate(req.params.cartId, req.body, {
-      new: true,
-    });
-    res.send(cart);
+    const cart = new Cart(req.body);
+    const insertedCart = await cart.findByIdAndUpdate(
+      req.params.cartId,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    res.send(insertedCart);
   } catch (e) {
-    res.status(500).send({ Message: e });
+    res.status(400).send({ Message: "Id inválido." });
   }
 };
 
@@ -60,7 +61,7 @@ const deleteCart = async (req, res) => {
       res.send(cart);
     }
   } catch (e) {
-    res.status(500).send({ Message: e });
+    res.status(400).send({ Message: "Id inválido." });
   }
 };
 

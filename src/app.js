@@ -36,5 +36,7 @@ app.use("/renovar", RefreshRouter);
 
 app.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_CONNECT);
-  console.log("App Running");
+  console.log(`Conectado na porta ${process.env.PORT}, aplicativo rodando.`);
 });
+
+module.exports = app;

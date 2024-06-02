@@ -10,7 +10,6 @@ const verifyToken = (req, res, next) => {
       res.status(401).json({ Message: "Token inválido!" });
     }
   } else {
-    console.log(req.headers["authorization"]);
     res.status(400).json({ Message: "Token inválido ou ausente." });
   }
 };

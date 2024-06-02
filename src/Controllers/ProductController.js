@@ -1,23 +1,21 @@
 const mongoose = require("mongoose");
 const { Product } = require("../Models/ProductModel");
 const JWT = require("jsonwebtoken");
+const { User } = require("../Models/UserModel");
 
 const getAllProducts = async (req, res) => {
-  try {
-    const Products = await Product.find();
-    if (!Products) {
-      res.status(404).send({ Message: "Não há produtos!" });
-    } else {
-      res.send(Products);
-    }
-  } catch (e) {
-    res.status(500).send({ Message: e });
+  const Products = await Product.find();
+  if (!Products) {
+    res.status(404).send({ Message: "Não há produtos!" });
+  } else {
+    res.send(Products);
   }
 };
 
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.productId);
+    const id = new mongoose.Types.ObjectId(req.params.productId);
+    const product = await Product.findById(id);
     if (!product) {
       res
         .status(404)
@@ -26,7 +24,7 @@ const getProductById = async (req, res) => {
       res.send(product);
     }
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: `Formato de ID inválido.` });
   }
 };
 
@@ -35,14 +33,18 @@ const getUserProducts = async (req, res) => {
     const userProduct = await Product.find({
       createdBy: req.params.userId,
     }).exec();
-
-    if (!userProduct) {
-      res.status(404).send({ Message: "Não há produtos para este usuário." });
+    const user = await User.findOne({ _id: req.params.userId });
+    if (!user) {
+      res.status(404).send({ Message: "Usuário não encontrado." });
     } else {
-      res.status(200).send(userProduct);
+      if (!userProduct) {
+        res.status(404).send({ Message: "Não há produtos para este usuário." });
+      } else {
+        res.status(200).send(userProduct);
+      }
     }
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: "Id inválido" });
   }
 };
 
@@ -51,19 +53,18 @@ const CreateProduct = async (req, res) => {
     req.headers["authorization"],
     process.env.JWT_SECRET
   );
-  console.log(currentUser.id);
-  // try {
-  const insertedProduct = await Product.create({
-    name: req.body.name,
-    price: req.body.price,
-    desc: req.body.desc,
-    image_URL: req.body.image_URL,
-    createdBy: currentUser.id,
-  });
-  res.status(201).send(insertedProduct);
-  // } catch (e) {
-  //   res.status(422).json({ Message: "Dados inválidos." });
-  // }
+  try {
+    const insertedProduct = await Product.create({
+      name: req.body.name,
+      price: req.body.price,
+      desc: req.body.desc,
+      image_URL: req.body.image_URL,
+      createdBy: currentUser.id,
+    });
+    res.status(201).send(insertedProduct);
+  } catch (e) {
+    res.status(422).json({ Message: "Dados inválidos." });
+  }
 };
 
 const UpdateProduct = async (req, res) => {
@@ -82,8 +83,7 @@ const UpdateProduct = async (req, res) => {
       res.send(product);
     }
   } catch (e) {
-    console.error(error);
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: "Formato de dados ou id inválido." });
   }
 };
 
@@ -92,12 +92,12 @@ const DeleteProduct = async (req, res) => {
     const product = await Product.findByIdAndDelete(req.params.productId);
 
     if (!product) {
-      res.status(404).send({ Message: "Produto não encontrado" });
+      res.status(404).send({ Message: "Produto não encontrado!" });
     } else {
       res.json(product);
     }
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: "Formato de dados ou id inválido." });
   }
 };
 

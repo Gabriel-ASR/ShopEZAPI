@@ -11,8 +11,8 @@ router.get("/:cartId", CartController.getCartById);
 router.post(
   "/",
   auth.verifyToken,
-  CartVerify.missingVerify,
   CartVerify.existingVerify,
+  CartVerify.missingVerify,
   CartController.addNewCart
 );
 

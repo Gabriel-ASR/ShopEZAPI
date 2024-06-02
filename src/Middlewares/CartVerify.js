@@ -1,5 +1,6 @@
 const { Cart } = require("../Models/CartModel");
 const { Product } = require("../Models/ProductModel");
+const JWT = require("jsonwebtoken");
 
 const missingVerify = async (req, res, next) => {
   const cart = new Cart({ ...req.body });
@@ -21,7 +22,6 @@ const missingVerify = async (req, res, next) => {
         currentProduct.createdBy != cart.productList[i].createdBy
       ) {
         invalidProd.push(cart.productList[i].name);
-        console.log(invalidProd);
       }
     }
   }
@@ -37,8 +37,11 @@ const missingVerify = async (req, res, next) => {
 };
 
 const existingVerify = async (req, res, next) => {
-  const cart = new Cart({ ...req.body });
-  const existingCart = await Cart.findOne({ ownedBy: cart.ownedBy });
+  const cartOwner = JWT.verify(
+    req.headers["authorization"],
+    process.env.JWT_SECRET
+  );
+  const existingCart = await Cart.findOne({ ownedBy: cartOwner.id });
   if (existingCart) {
     res.status(409).send({ message: "Carrinho já existente!" });
   } else {

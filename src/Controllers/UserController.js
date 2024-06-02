@@ -3,20 +3,9 @@ const { User } = require("../Models/UserModel");
 const crypto = require("crypto");
 const JWT = require("jsonwebtoken");
 
-const validateData = async (req, res, next) => {
-  const user = new User(req.body);
-  try {
-    await user.validate();
-    next();
-  } catch (e) {
-    res.status(422).json({ Message: "Dados inválidos." });
-  }
-};
-
 const existingUserVer = async (req, res, next) => {
   const newUser = new User({ ...req.body });
   const existingUser = await User.findOne({ email: newUser.email });
-  console.log(existingUser);
   try {
     if (existingUser) {
       res
@@ -37,15 +26,11 @@ const passwordEncrypt = (password, salt) => {
 };
 
 const getAllUsers = async (req, res) => {
-  try {
-    const user = await User.find();
-    if (!user) {
-      res.status(400).send({ Message: "Não há usuários!" });
-    } else {
-      res.send(user);
-    }
-  } catch (e) {
-    res.status(500).json({ Message: e });
+  const user = await User.find();
+  if (!user) {
+    res.status(400).send({ Message: "Não há usuários!" });
+  } else {
+    res.send(user);
   }
 };
 
@@ -58,14 +43,14 @@ const getUserById = async (req, res) => {
       res.json(user);
     }
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: "Id inválido." });
   }
 };
 
 const createNewUser = async (req, res) => {
-  const salt = crypto.randomBytes(32).toString("hex");
-  const encrypted = passwordEncrypt(req.body.password, salt);
   try {
+    const salt = crypto.randomBytes(32).toString("hex");
+    const encrypted = passwordEncrypt(req.body.password, salt);
     const insertedUser = await User.create({
       email: req.body.email,
       password: encrypted,
@@ -79,22 +64,39 @@ const createNewUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.userId, req.body, {
-      new: true,
-    });
-    if (!user) {
+    const foundUser = await User.findById(req.params.userId);
+    if (!foundUser) {
       res.status(404).send({ Message: "Usuário inexistente!" });
     } else {
-      res.send(user);
+      let user;
+      if (req.body.password) {
+        const encrypted = passwordEncrypt(req.body.password, foundUser.salt);
+        user = await User.findByIdAndUpdate(
+          req.params.userId,
+          { email: req.body.email, password: encrypted },
+          { new: true }
+        );
+      } else {
+        user = await User.findByIdAndUpdate(
+          req.params.userId,
+          { email: req.body.email },
+          {
+            new: true,
+          }
+        );
+      }
+      res.json({ user });
     }
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(400).json({ Message: "Id inválido." });
   }
 };
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.userId, { new: true });
+    const user = await User.findByIdAndDelete(req.params.userId, {
+      new: true,
+    });
     if (!user) {
       res.status(404).send({ Message: "Usuário inexistente!" });
     } else {
@@ -111,7 +113,6 @@ module.exports = {
   createNewUser,
   updateUser,
   deleteUser,
-  validateData,
   existingUserVer,
   passwordEncrypt,
 };
