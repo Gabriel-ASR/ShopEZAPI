@@ -9,7 +9,9 @@ const UsersRouter = require("./Routes/UsersRouter");
 const ProductRouter = require("./Routes/ProductRouter");
 const ApiDocsRouter = require("./Routes/ApiDocsRouter");
 const SignInRouter = require("./Routes/SignInRouter");
-const CartRoute = require("./Routes/CartRouter");
+const CartRouter = require("./Routes/CartRouter");
+const LogInRouter = require("./Routes/logInRouter");
+const RefreshRouter = require("./Routes/RefreshRouter");
 
 const app = express();
 
@@ -26,7 +28,11 @@ app.use("/produtos", ProductRouter);
 
 app.use("/cadastrar", SignInRouter);
 
-app.use("/carrinhos", CartRoute);
+app.use("/carrinhos", CartRouter);
+
+app.use("/login", LogInRouter);
+
+app.use("/renovar", RefreshRouter);
 
 app.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_CONNECT);

@@ -42,6 +42,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
 
   /produtos/{id}:
     get:
@@ -88,6 +90,8 @@ paths:
             applcation/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
     delete:
       summary: Deleta o produto especificado pelo Id.
       tags:
@@ -107,6 +111,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
 
   /usuarios/{id}/produtos:
     get:
@@ -145,6 +151,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
 
   /usuarios/{id}:
     get:
@@ -190,6 +198,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
     delete:
       summary: Deleta o usuário especificado pelo Id.
       tags:
@@ -209,33 +219,8 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Message"
-
-  /cadastrar:
-    post:
-      summary: Cria um novo usuário.
-      tags:
-        - Usuários
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#components/schemas/User"
-      responses:
-        201:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        409:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        422:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
 
   /carrinhos:
     get:
@@ -253,6 +238,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
     post:
       summary: Cria um novo carrinho.
       tags:
@@ -278,6 +265,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
+
   /carrinhos/{id}:
     get:
       summary: Retorna o carrinho especificado pelo Id inserido.
@@ -298,6 +288,8 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Message"
+    security:
+      - JWTAuth: []
     put:
       summary: Atualiza o carrinho especificado pelo Id.
       tags:
@@ -322,6 +314,9 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
+
     delete:
       summary: Deleta o carrinho especificado pelo Id.
       tags:
@@ -341,26 +336,114 @@ paths:
             application/json:
               schemas:
                 $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
+
+  /renovar:
+    get:
+      summary: Renova o JWT.
+      tags:
+        - Autenticação
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+      security:
+        - JWTAuth: []
+
+  /cadastrar:
+    post:
+      summary: Cria um novo usuário.
+      tags:
+        - Autenticação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        409:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        422:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /login:
+    post:
+      summary: Realiza o login.
+      tags:
+        - Autenticação
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        401:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
 
 components:
+  securitySchemes:
+    JWTAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+
   schemas:
     Product:
       type: object
       properties:
         name:
           type: string
-        preco:
+        price:
           type: number
         desc:
           type: string
         image_URL:
           type: string
-        createdBy:
-          type: string
     Message:
       type: object
       properties:
-        msg:
+        Message:
+          type: string
+    Token:
+      type: object
+      properties:
+        Token:
           type: string
     User:
       type: object
@@ -379,7 +462,7 @@ components:
             properties:
               name:
                 type: string
-              preco:
+              price:
                 type: number
               desc:
                 type: string
@@ -387,5 +470,3 @@ components:
                 type: string
               createdBy:
                 type: string
-        ownedBy:
-          type: string

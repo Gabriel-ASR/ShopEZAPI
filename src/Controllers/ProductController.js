@@ -1,15 +1,6 @@
 const mongoose = require("mongoose");
 const { Product } = require("../Models/ProductModel");
-
-const validateData = async (req, res, next) => {
-  const product = new Product({ ...req.body });
-  try {
-    await product.validate();
-    next();
-  } catch (e) {
-    res.status(422).json({ Message: "Dados inválidos." });
-  }
-};
+const JWT = require("jsonwebtoken");
 
 const getAllProducts = async (req, res) => {
   try {
@@ -56,13 +47,23 @@ const getUserProducts = async (req, res) => {
 };
 
 const CreateProduct = async (req, res) => {
-  try {
-    const newProduct = new Product({ ...req.body });
-    const insertedProduct = await newProduct.save();
-    res.status(201).send(insertedProduct);
-  } catch (e) {
-    res.status(500).json({ Message: e });
-  }
+  const currentUser = JWT.verify(
+    req.headers["authorization"],
+    process.env.JWT_SECRET
+  );
+  console.log(currentUser.id);
+  // try {
+  const insertedProduct = await Product.create({
+    name: req.body.name,
+    price: req.body.price,
+    desc: req.body.desc,
+    image_URL: req.body.image_URL,
+    createdBy: currentUser.id,
+  });
+  res.status(201).send(insertedProduct);
+  // } catch (e) {
+  //   res.status(422).json({ Message: "Dados inválidos." });
+  // }
 };
 
 const UpdateProduct = async (req, res) => {
@@ -107,5 +108,4 @@ module.exports = {
   UpdateProduct,
   DeleteProduct,
   getUserProducts,
-  validateData,
 };

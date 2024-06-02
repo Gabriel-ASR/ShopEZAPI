@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { User } = require("../Models/UserModel");
+const crypto = require("crypto");
+const JWT = require("jsonwebtoken");
 
 const validateData = async (req, res, next) => {
   const user = new User(req.body);
@@ -9,6 +11,29 @@ const validateData = async (req, res, next) => {
   } catch (e) {
     res.status(422).json({ Message: "Dados inválidos." });
   }
+};
+
+const existingUserVer = async (req, res, next) => {
+  const newUser = new User({ ...req.body });
+  const existingUser = await User.findOne({ email: newUser.email });
+  console.log(existingUser);
+  try {
+    if (existingUser) {
+      res
+        .status(409)
+        .send({ Message: "Já existe um usuário com este e-mail!" });
+    } else {
+      next();
+    }
+  } catch (e) {
+    res.status(500).json({ Message: e });
+  }
+};
+
+const passwordEncrypt = (password, salt) => {
+  const hash = crypto.createHmac("sha256", salt);
+  hash.update(password);
+  return hash.digest("hex");
 };
 
 const getAllUsers = async (req, res) => {
@@ -38,20 +63,17 @@ const getUserById = async (req, res) => {
 };
 
 const createNewUser = async (req, res) => {
-  const newUser = new User({ ...req.body });
+  const salt = crypto.randomBytes(32).toString("hex");
+  const encrypted = passwordEncrypt(req.body.password, salt);
   try {
-    const existingUser = await User.findOne({ email: newUser.email });
-    console.log(existingUser);
-    if (existingUser) {
-      res
-        .status(409)
-        .send({ Message: "Já existe um usuário com este e-mail!" });
-    } else {
-      const insertedUser = await newUser.save();
-      res.status(201).json(insertedUser);
-    }
+    const insertedUser = await User.create({
+      email: req.body.email,
+      password: encrypted,
+      salt: salt,
+    });
+    res.status(201).json(insertedUser);
   } catch (e) {
-    res.status(500).json({ Message: e });
+    res.status(422).json({ Message: "Dados inválidos!" });
   }
 };
 
@@ -82,6 +104,7 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ Message: e });
   }
 };
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -89,4 +112,6 @@ module.exports = {
   updateUser,
   deleteUser,
   validateData,
+  existingUserVer,
+  passwordEncrypt,
 };
