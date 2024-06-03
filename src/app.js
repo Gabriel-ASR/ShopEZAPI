@@ -4,6 +4,7 @@ var express = require("express");
 const mongoose = require("mongoose");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const path = require("path");
 
 const UsersRouter = require("./Routes/UsersRouter");
 const ProductRouter = require("./Routes/ProductRouter");
@@ -33,6 +34,10 @@ app.use("/carrinhos", CartRouter);
 app.use("/login", LogInRouter);
 
 app.use("/renovar", RefreshRouter);
+
+app.get("/", (req, res) => {
+  res.send(process.env.FRONTPAGE);
+});
 
 app.listen(process.env.PORT, () => {
   mongoose.connect(process.env.MONGODB_CONNECT);
