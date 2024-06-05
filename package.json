@@ -4,7 +4,7 @@
   "description": "API de uma loja online.",
   "main": "app.js",
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest --watchAll --detectOpenHandles --forceExit",
     "dev": "nodemon src/app.js"
   },
   "author": "Gabriel Rocha",
